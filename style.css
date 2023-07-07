@@ -1,0 +1,17 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: grey;
+  margin: 0;
+}
+
+.on {
+  background-color: rgb(164, 210, 95);
+}
+
+.canvas {
+  background-color: white;
+  margin: 0;
+}
