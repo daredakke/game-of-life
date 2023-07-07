@@ -12,6 +12,42 @@ function generateCellGrid(rows, columns, random) {
 }
 
 
+function getNeighbourIndexes() {
+  let arr = [];
+  let tempArr = [];
+  let index = 0;
+
+  for (let x = 0; x < cells.length; x++) {
+    tempArr = [
+      x - columns - 1,
+      x - columns,
+      x - columns + 1,
+      x - 1,
+      x + 1,
+      x + columns - 1,
+      x + columns,
+      x + columns + 1
+    ];
+
+    for (i in tempArr) {
+      index = tempArr[i];
+
+      if (tempArr[i] < 0) {
+        index = (length + 1) + tempArr[i];
+        tempArr[i] = index;
+      }
+
+      if (tempArr[i] >= length) {
+        index = tempArr[i] - length;
+        tempArr[i] = index;
+      }
+    }
+    arr.push(tempArr);
+  }
+  return arr;
+}
+
+
 function drawCellGrid(cellSize, columns) {
   let y = -1;
   let cellX = 0;
@@ -44,45 +80,31 @@ function toggleCell(e) {
 
 
 function simulate() {
+  const length = cells.length;
   let newCellGrid = [];
-  let neighbourIndexes = [];
   let neighbours = 0;
   let newCell = 0;
-  let index = 0;
 
-  for (let x = 0; x < cells.length; x++) {
-    neighbourIndexes = [
-      x - columns - 1,
-      x - columns,
-      x - columns + 1,
-      x - 1,
-      x + 1,
-      x + columns - 1,
-      x + columns,
-      x + columns + 1
-    ];
+  for (let x = 0; x < length; x++) {
+    newCell = cells[x];
 
-    for (i of neighbourIndexes) {
-      index = i;
-
-      if (i < 0) {
-        index = (cells.length + 1) + i;
+    for (i of neighbourIndexes[x]) {
+      if (cells[i]) {
+        neighbours++;
       }
-
-      if (i >= cells.length){
-        index = i - cells.length;
-      }
-
-      neighbours += cells[index] ? 1 : 0;
     }
 
-    if (cells[x]) {
-      newCell = neighbours < 2 || neighbours > 3 ? 0 : 1;
+    if (newCell) {
+      if (neighbours < 2 || neighbours > 3) {
+        newCell = 0;
+      }
     } else {
-      newCell = neighbours === 3 ? 1 : 0;
+      if (neighbours === 3) {
+        newCell = 1;
+      }
     }
-
     neighbours = 0;
+
     newCellGrid.push(newCell);
   }
 
@@ -142,6 +164,7 @@ let play = false;
 let generations = 0;
 let interval;
 let cells = generateCellGrid(columns, rows, false);
+let neighbourIndexes = getNeighbourIndexes();
 
 drawCellGrid(cellSize, columns);
 
